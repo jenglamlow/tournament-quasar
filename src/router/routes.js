@@ -1,3 +1,4 @@
+import { AuthRouter } from './AuthRouter';
 
 export default [
   {
@@ -7,6 +8,7 @@ export default [
       { path: '', component: () => import('pages/index') }
     ]
   },
+  AuthRouter,
 
   { // Always leave this as last one
     path: '*',

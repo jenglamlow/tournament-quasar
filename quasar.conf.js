@@ -1,12 +1,14 @@
-// Configuration for your app
+const path = require('path');
 
+// Configuration for your app
 module.exports = function (ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
       'i18n',
       'axios',
-      'vuelidate'
+      'vuelidate',
+      'vuefire'
     ],
     css: [
       'app.styl'
@@ -27,6 +29,10 @@ module.exports = function (ctx) {
       // analyze: true,
       // extractCSS: false,
       extendWebpack (cfg) {
+        cfg.resolve.alias = {
+          ...cfg.resolve.alias,
+          '@': path.resolve(__dirname, './src')
+        };
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
@@ -56,7 +62,15 @@ module.exports = function (ctx) {
         'QListHeader',
         'QItem',
         'QItemMain',
-        'QItemSide'
+        'QItemSide',
+        'QInput',
+        'QCard',
+        'QCardTitle',
+        'QCardMain',
+        'QCardMedia',
+        'QCardSeparator',
+        'QCardActions',
+        'QField'
       ],
       directives: [
         'Ripple'
