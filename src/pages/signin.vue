@@ -44,13 +44,14 @@
 
 <script>
 import { required, email } from 'vuelidate/lib/validators';
+import { auth } from '@/firebase';
 
 export default {
   data () {
     return {
       form: {
         email: 'a@a.com',
-        password: 'Abcd1234!'
+        password: 'Abcd1234'
       },
       fetching: false
     };
@@ -73,9 +74,9 @@ export default {
       } else {
         this.fetching = true;
 
-        this.$auth.signInWithEmailAndPassword(this.form.email, this.form.password)
+        auth.signInWithEmailAndPassword(this.form.email, this.form.password)
           .then(() => {
-            // this.$router.push({path: '/'});
+            this.$router.push({path: '/'});
           })
           .catch((error) => {
             console.log(error);
@@ -90,7 +91,7 @@ export default {
       }
     },
     handleSignUp () {
-
+      this.$router.push({path: '/signup'});
     }
   }
 };

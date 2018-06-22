@@ -8,7 +8,8 @@ module.exports = function (ctx) {
       'i18n',
       'axios',
       'vuelidate',
-      'vuefire'
+      'vuefire',
+      'routeFilter'
     ],
     css: [
       'app.styl'

@@ -20,6 +20,16 @@
           Wiser
           <div slot="subtitle">Tournament App</div>
         </q-toolbar-title>
+
+        <q-btn
+          flat
+          dense
+          round
+          @click="handleLogout"
+          aria-label="Logout"
+        >
+          <q-icon name="exit_to_app" />
+        </q-btn>
       </q-toolbar>
     </q-layout-header>
 
@@ -51,6 +61,7 @@
 </template>
 
 <script>
+import { auth } from '@/firebase';
 
 export default {
   name: 'LayoutDefault',
@@ -60,6 +71,14 @@ export default {
     };
   },
   methods: {
+    handleLogout () {
+      auth.signOut()
+        .then(() => {
+          location.reload(); // To refresh vue-router
+        }).catch(error => {
+          console.log(error);
+        });
+    }
   }
 };
 </script>

@@ -13,9 +13,7 @@ export default {
   name: 'HomePage',
   methods: {
     handleClick () {
-      this.$auth.signInWithEmailAndPassword('a@a.com', 'Abcd1234')
-        .then(user => console.log(user))
-        .catch(err => console.log('diu', err));
+      console.log('click');
     }
   }
 };

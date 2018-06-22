@@ -3,12 +3,18 @@ import { AuthRouter } from './AuthRouter';
 export default [
   {
     path: '/',
-    component: () => import('layouts/default'),
+    component: () => import('layouts/dashboard'),
     children: [
-      { path: '', component: () => import('pages/index') }
+      {
+        path: '',
+        component: () => import('pages/home'),
+        meta: {
+          requiresAuth: true
+        }
+      }
     ]
   },
-  AuthRouter,
+  ...AuthRouter,
 
   { // Always leave this as last one
     path: '*',
