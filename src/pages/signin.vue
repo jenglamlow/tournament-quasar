@@ -76,7 +76,7 @@ export default {
 
         auth.signInWithEmailAndPassword(this.form.email, this.form.password)
           .then(() => {
-            this.$router.push({path: '/'});
+            this.$router.push('/');
           })
           .catch((error) => {
             console.log(error);
@@ -91,7 +91,7 @@ export default {
       }
     },
     handleSignUp () {
-      this.$router.push({path: '/signup'});
+      this.$router.push('/signup');
     }
   }
 };

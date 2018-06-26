@@ -1,16 +1,22 @@
 <template>
-  <q-page class="flex flex-center">
+  <div class="flex flex-center column">
     <h1>Landing Page</h1>
-  </q-page>
+    <br>
+    <q-btn color="primary" @click="handleClick">Login</q-btn>
+  </div>
 </template>
-
-<style>
-</style>
 
 <script>
 export default {
   name: 'LandingPage',
   methods: {
+    handleClick () {
+      this.$router.push('/signin');
+    }
   }
 };
 </script>
+
+<style scoped>
+
+</style>

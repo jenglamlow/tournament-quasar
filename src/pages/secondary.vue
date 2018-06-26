@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center column">
-    <h1>HOME</h1>
+    <h1>Secondary</h1>
     <q-btn color="primary" @click="handleClick">Click</q-btn>
   </q-page>
 </template>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'HomePage',
+  name: 'Tournament',
   methods: {
     handleClick () {
       console.log('click');

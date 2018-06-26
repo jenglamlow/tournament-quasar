@@ -43,13 +43,13 @@
         inset-delimiter
       >
         <q-list-header>Menu</q-list-header>
-        <q-item>
-          <q-item-side icon="school" />
-          <q-item-main label="Home"/>
+        <q-item to="/team">
+          <q-item-side icon="group" />
+          <q-item-main label="Team"/>
         </q-item>
-        <q-item>
-          <q-item-side icon="code" />
-          <q-item-main label="Tournament"/>
+        <q-item to="/secondary">
+          <q-item-side icon="school" />
+          <q-item-main label="Secondary"/>
         </q-item>
       </q-list>
     </q-layout-drawer>
