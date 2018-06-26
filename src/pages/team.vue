@@ -5,35 +5,73 @@
       icon="note add"
       color="secondary"
       class=""
-      @click.native="addTeamModal = true"
+      @click.native="openModal('create')"
     >
       Add Team
     </q-btn>
 
-    <!-- Create Team Modal -->
-    <q-modal v-model="addTeamModal" :content-css="{padding: '30px', minWidth: '60vw', minHeight: '60vh'}">
-      <h5>Add a Team</h5>
+    <!-- Data Table -->
+    <q-table
+      :data="teams"
+      :columns="columns"
+      title="Team List"
+      class=""
+      color=""
+      row-key="name"
+      style="margin-top: 30px"
+    >
+      <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props.row)" class="cursor-pointer">
+        <q-td v-for="col in props.cols" :key="col.name" :props="props">
+          {{ col.value }}
+        </q-td>
+      </q-tr>
+    </q-table>
+
+    <!-- Modal Page -->
+    <q-modal
+      v-model="teamModal"
+      :content-css="{padding: '30px', minWidth: '60vw', minHeight: '60vh'}"
+      @hide="resetForm()"
+    >
+      <h5 v-if="modalType === 'create'">Add a Team</h5>
+      <h5 v-else>Update Team</h5>
 
       <p class="caption">Team Name</p>
       <q-input
         v-model="form.name"
-        :error="$v.form.name.$error || this.isExist"
+        :error="$v.form.name.$error"
+        @blur="$v.form.name.$touch"
       >
       </q-input>
 
       <p class="caption">Category</p>
-      <!-- <q-input v-model="form.category" type="text"></q-input> -->
       <q-select
         v-model="form.category"
         :error="$v.form.category.$error"
         :options="categoryOption"
+        @blur="$v.form.category.$touch"
       />
 
       <div class="absolute-bottom-right" style="padding: 30px">
-        <q-btn class="q-ma-xs" color="primary" @click="submitAddTeam">Create</q-btn>
-        <q-btn class="q-ma-xs" @click="addTeamModal = false">Cancel</q-btn>
+        <q-btn v-if="modalType === 'create'"
+          class="q-ma-xs"
+          color="primary"
+          @click="onSubmit"
+        >
+          Create
+        </q-btn>
+        <q-btn v-else
+          class="q-ma-xs"
+          color="primary"
+          @click="onSubmit"
+          :disable="!$v.form.$anyDirty"
+        >
+          Submit
+        </q-btn>
+        <q-btn class="q-ma-xs" @click="resetForm">Cancel</q-btn>
       </div>
     </q-modal>
+
   </q-page>
 </template>
 
@@ -49,8 +87,29 @@ export default {
         name: '',
         category: ''
       },
-      addTeamModal: false,
-      isExist: false
+
+      columns: [
+        {
+          name: 'teamName',
+          required: true,
+          label: 'Name',
+          align: 'left',
+          field: 'name',
+          sortable: true
+        },
+        {
+          name: 'category',
+          label: 'Category',
+          field: 'categoryName',
+          sortable: true
+        }
+      ],
+      teams: [],
+      categories: [],
+
+      teamModal: false,
+      modalType: '',
+      selectedId: ''
     };
   },
 
@@ -63,25 +122,42 @@ export default {
 
   computed: {
     categoryOption () {
-      let options = [];
-      for (let i = 0; i < this.categories.length; i++) {
-        let categoryItem = {
-          value: this.categories[i]['.key'],
-          label: this.categories[i]['.key']
-        };
-        options.push(categoryItem);
-      }
+      let options = this.categories
+        .reduce((acc, cur) => {
+          let obj = {
+            value: cur.id + ':' + cur.name,
+            label: cur.name
+          };
+          acc.push(obj);
+          return acc;
+        }, []);
+
       return options;
     }
   },
 
-  firebase: {
-    categories: db.ref('categories'),
-    team: db.ref('team')
+  firestore: {
+    categories: db.collection('categories'),
+    teams: db.collection('teams')
   },
 
   methods: {
-    submitAddTeam () {
+    openModal (type) {
+      this.modalType = type;
+      this.teamModal = true;
+    },
+
+    resetForm () {
+      // clear input field once submitted
+      this.form.name = '';
+      this.form.category = '';
+      this.$v.form.$reset();
+
+      // Close Modal
+      this.teamModal = false;
+    },
+
+    onSubmit () {
       this.$v.form.$touch();
 
       if (this.$v.form.$error) {
@@ -90,39 +166,31 @@ export default {
           position: 'top'
         });
       } else {
-        // Create namekey
-        const nameKey = this.form.name.toLowerCase().split(' ').join('_');
+        // Team Data
+        const teamData = {
+          name: this.form.name,
+          categoryId: this.form.category.split(':')[0],
+          categoryName: this.form.category.split(':')[1]
+        };
 
-        // Check team name existence
-        this.$firebaseRefs.team.child(nameKey).once('value', snapshot => {
-          if (snapshot.exists()) {
-            this.isExist = true;
-            this.$q.notify({
-              message: 'Team name "' + this.form.name + '" exist. Please choose another',
-              position: 'top'
-            });
-          } else {
-            this.isExist = false;
-            // Team Data
-            const teamData = {
-              name: this.form.name,
-              category: this.form.category
-            };
+        // Publish to the database
+        if (this.modalType === 'create') {
+          this.$firestoreRefs.teams.add(teamData);
+        } else {
+          this.$firestoreRefs.teams.doc(this.selectedId).set(teamData);
+        }
 
-            // Publish to the database
-            this.$firebaseRefs.team.child(nameKey).set(teamData);
-
-            // clear input field once submitted
-            this.form.name = '';
-            this.form.category = '';
-            this.$v.form.$reset();
-
-            // Close Modal
-            this.addTeamModal = false;
-          }
-        });
+        this.resetForm();
       }
+    },
+
+    rowClick (row) {
+      this.form.name = row.name;
+      this.form.category = row.categoryId + ':' + row.categoryName;
+      this.selectedId = row.id;
+      this.openModal('update');
     }
+
   }
 };
 </script>
