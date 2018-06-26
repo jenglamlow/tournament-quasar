@@ -100,7 +100,7 @@ export default {
         {
           name: 'category',
           label: 'Category',
-          field: 'categoryName',
+          field: 'category',
           sortable: true
         }
       ],
@@ -125,7 +125,7 @@ export default {
       let options = this.categories
         .reduce((acc, cur) => {
           let obj = {
-            value: cur.id + ':' + cur.name,
+            value: cur.name,
             label: cur.name
           };
           acc.push(obj);
@@ -169,8 +169,7 @@ export default {
         // Team Data
         const teamData = {
           name: this.form.name,
-          categoryId: this.form.category.split(':')[0],
-          categoryName: this.form.category.split(':')[1]
+          category: this.form.category
         };
 
         // Publish to the database
@@ -186,7 +185,7 @@ export default {
 
     rowClick (row) {
       this.form.name = row.name;
-      this.form.category = row.categoryId + ':' + row.categoryName;
+      this.form.category = row.category;
       this.selectedId = row.id;
       this.openModal('update');
     }
