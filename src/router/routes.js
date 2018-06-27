@@ -21,9 +21,9 @@ export default [
         component: () => import('pages/team')
       },
       {
-        path: '/secondary',
-        name: 'secondary',
-        component: () => import('pages/secondary')
+        path: '/tournament/:id',
+        name: 'tournament',
+        component: () => import('pages/tournament')
       }
     ]
   },

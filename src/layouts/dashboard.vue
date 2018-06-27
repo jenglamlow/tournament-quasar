@@ -47,10 +47,11 @@
           <q-item-side icon="group" />
           <q-item-main label="Team"/>
         </q-item>
-        <q-item to="/secondary">
-          <q-item-side icon="school" />
-          <q-item-main label="Secondary"/>
-        </q-item>
+        <q-collapsible icon="event" label="Tournament">
+          <q-item v-for="t in tournaments" :key="t['.key']" :to="tournamentUrl(t.id)">
+            <q-item-main :label="t.name"/>
+          </q-item>
+         </q-collapsible>
       </q-list>
     </q-layout-drawer>
 
@@ -61,16 +62,26 @@
 </template>
 
 <script>
-import { auth } from '@/firebase';
+import { auth, db } from '@/firebase';
 
 export default {
   name: 'LayoutDefault',
   data () {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop
+      leftDrawerOpen: this.$q.platform.is.desktop,
+      tournaments: []
     };
   },
+
+  firestore: {
+    tournaments: db.collection('tournaments')
+  },
+
   methods: {
+    tournamentUrl (id) {
+      return '/tournament/' + id;
+    },
+
     handleLogout () {
       auth.signOut()
         .then(() => {
