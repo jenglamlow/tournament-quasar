@@ -11,7 +11,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "firebase": "^5.1.0",
     "vue-i18n": "^7.3.3",
     "vuefire": "^2.0.0-alpha.11",
